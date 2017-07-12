@@ -10,8 +10,18 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
+var url = '127.0.0.1:27017/' + process.env.OPENSHIFT_APP_NAME;
 
-mongoose.connect('mongodb://annonymous:12345@localhost/loginapp');
+// if OPENSHIFT env variables are present, use the available connection info:
+if (process.env.OPENSHIFT_MONGODB_DB_URL) {
+    url = process.env.OPENSHIFT_MONGODB_DB_URL +
+    process.env.OPENSHIFT_APP_NAME;
+}
+
+// Connect to mongodb
+mongoose.connect(url);
+//mongoose.connect('mongodb://annonymous:12345@localhost/loginapp');
+
 var db = mongoose.connection;
 
 var routes = require('./routes/index');
